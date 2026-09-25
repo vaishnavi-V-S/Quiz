@@ -1,0 +1,8 @@
+node_modules/
+.vercel/
+.netlify/
+*.log
+kle-bca-quiz-hosting.zip
+.env
+.env.*
+!.env.example
