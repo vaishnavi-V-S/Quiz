@@ -4,7 +4,7 @@ A responsive quiz website built with plain HTML, CSS, and browser JavaScript. It
 
 ## Source questions and answers
 
-The question bank contains 67 questions transcribed from the supplied Karnataka PGCET MCA paper. Some diagram-dependent or unclear questions were omitted rather than guessed. The paper did not include an official answer key. 66 answer keys are independently worked from the question text and are labelled non-official in the admin dashboard and data. Question 66 has conflicting wording and options, so it remains unverified and disabled until an administrator resolves it. The PDF lists 100 numbered questions even though its general instructions say 120; only the 67 transcribed entries are included, and diagram-dependent/unclear items are omitted rather than reconstructed.
+The question bank contains 74 questions transcribed from the supplied Karnataka PGCET MCA paper. Some diagram-dependent or unclear questions were omitted rather than guessed. The paper did not include an official answer key. 73 answer keys are independently worked from the question text and are labelled non-official in the admin dashboard and data. Question 66 has conflicting wording and options, so it remains unverified and disabled until an administrator resolves it. The PDF lists 100 numbered questions even though its general instructions say 120; only the 74 transcribed entries are included, and diagram-dependent/unclear items are omitted rather than reconstructed.
 
 ## Deploy to Netlify
 

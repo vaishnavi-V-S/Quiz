@@ -334,6 +334,36 @@
       "verificationMethod": "Independently worked from the question text; not an official KEA answer key."
     },
     {
+      "id": "pgcet2026_q015",
+      "sourceQuestionNumber": 15,
+      "question": "What is the meaning of 16 ? 8 organization with respect to memory chip?",
+      "options": [
+        {
+          "id": "pgcet2026_q015_opt1",
+          "text": "8 words of 16 bits each"
+        },
+        {
+          "id": "pgcet2026_q015_opt2",
+          "text": "16 bits ? 8 bits"
+        },
+        {
+          "id": "pgcet2026_q015_opt3",
+          "text": "16 words of 8 bits each"
+        },
+        {
+          "id": "pgcet2026_q015_opt4",
+          "text": "16 words of 8 bytes each"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q015_opt3",
+      "category": "Computer Fundamentals",
+      "image": null,
+      "explanation": "A 16 ? 8 memory organization stores 16 words, each 8 bits wide.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
+    },
+    {
       "id": "pgcet2026_q016",
       "sourceQuestionNumber": 16,
       "question": "Reservation clerks for Airlines and Hotels check availability for given request and make reservation. These type of users are categorised into _____ with respect to database applications.",
@@ -544,6 +574,66 @@
       "verificationMethod": "Independently worked from the question text; not an official KEA answer key."
     },
     {
+      "id": "pgcet2026_q023",
+      "sourceQuestionNumber": 23,
+      "question": "The decimal number 25?? is represented in binary as:",
+      "options": [
+        {
+          "id": "pgcet2026_q023_opt1",
+          "text": "11001?"
+        },
+        {
+          "id": "pgcet2026_q023_opt2",
+          "text": "10101?"
+        },
+        {
+          "id": "pgcet2026_q023_opt3",
+          "text": "11100?"
+        },
+        {
+          "id": "pgcet2026_q023_opt4",
+          "text": "10011?"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q023_opt1",
+      "category": "Computer Fundamentals",
+      "image": null,
+      "explanation": "25 in decimal is 11001 in binary.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
+    },
+    {
+      "id": "pgcet2026_q024",
+      "sourceQuestionNumber": 24,
+      "question": "Arrange the following steps in correct order to binary: (i) Repeat division until becomes 0 (ii) Divide the number by 2 (iii) Write the remainder (iv) Write the remainder in reverse order.",
+      "options": [
+        {
+          "id": "pgcet2026_q024_opt1",
+          "text": "(i), (ii), (iii), (iv)"
+        },
+        {
+          "id": "pgcet2026_q024_opt2",
+          "text": "(ii), (iii), (i), (iv)"
+        },
+        {
+          "id": "pgcet2026_q024_opt3",
+          "text": "(iii), (i), (iv), (ii)"
+        },
+        {
+          "id": "pgcet2026_q024_opt4",
+          "text": "(iv), (ii), (iii), (i)"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q024_opt2",
+      "category": "Computer Fundamentals",
+      "image": null,
+      "explanation": "Repeated division by 2 produces remainders; stop at zero and reverse the remainders.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
+    },
+    {
       "id": "pgcet2026_q026",
       "sourceQuestionNumber": 26,
       "question": "A floating point number typically consists of (i) Sign bit (ii) Parity bit (iii) Mantissa (Significand) (iv) Exponent",
@@ -602,6 +692,36 @@
       "verified": true,
       "enabled": true,
       "verificationMethod": "Independently worked from the question text; not an official KEA answer key."
+    },
+    {
+      "id": "pgcet2026_q028",
+      "sourceQuestionNumber": 28,
+      "question": "The result of 101? ? 10? is:",
+      "options": [
+        {
+          "id": "pgcet2026_q028_opt1",
+          "text": "1010?"
+        },
+        {
+          "id": "pgcet2026_q028_opt2",
+          "text": "1000?"
+        },
+        {
+          "id": "pgcet2026_q028_opt3",
+          "text": "1110?"
+        },
+        {
+          "id": "pgcet2026_q028_opt4",
+          "text": "1100?"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q028_opt1",
+      "category": "Computer Fundamentals",
+      "image": null,
+      "explanation": "101? is 5 and 10? is 2; their product is 10, or 1010?.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
     },
     {
       "id": "pgcet2026_q030",
@@ -904,6 +1024,36 @@
       "verificationMethod": "Independently worked from the question text; not an official KEA answer key."
     },
     {
+      "id": "pgcet2026_q044",
+      "sourceQuestionNumber": 44,
+      "question": "If A ? B means A and B are of the same age, and A ? B means B is younger than A, then Himani ? Mahesh ? Jay means:",
+      "options": [
+        {
+          "id": "pgcet2026_q044_opt1",
+          "text": "Himani is younger than Jay"
+        },
+        {
+          "id": "pgcet2026_q044_opt2",
+          "text": "Mahesh is younger than Jay"
+        },
+        {
+          "id": "pgcet2026_q044_opt3",
+          "text": "Jay is the youngest"
+        },
+        {
+          "id": "pgcet2026_q044_opt4",
+          "text": "Jay is the oldest"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q044_opt3",
+      "category": "Logical Reasoning",
+      "image": null,
+      "explanation": "Himani and Mahesh are the same age; Jay is younger than Mahesh, so Jay is the youngest.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
+    },
+    {
       "id": "pgcet2026_q045",
       "sourceQuestionNumber": 45,
       "question": "If the sum of two numbers is 10 and the difference of their squares is 20, then these numbers are:",
@@ -932,6 +1082,36 @@
       "verified": true,
       "enabled": true,
       "verificationMethod": "Independently worked from the question text; not an official KEA answer key."
+    },
+    {
+      "id": "pgcet2026_q046",
+      "sourceQuestionNumber": 46,
+      "question": "A figure consists of a triangle attached to a square such that the triangle points up. If the figure is rotated 90? clockwise, then where will the triangle point?",
+      "options": [
+        {
+          "id": "pgcet2026_q046_opt1",
+          "text": "Left"
+        },
+        {
+          "id": "pgcet2026_q046_opt2",
+          "text": "Right"
+        },
+        {
+          "id": "pgcet2026_q046_opt3",
+          "text": "Downward"
+        },
+        {
+          "id": "pgcet2026_q046_opt4",
+          "text": "Upward"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q046_opt2",
+      "category": "Logical Reasoning",
+      "image": null,
+      "explanation": "A direction pointing up rotates to the right after a 90? clockwise rotation.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
     },
     {
       "id": "pgcet2026_q048",
@@ -1382,6 +1562,36 @@
       "verified": false,
       "enabled": false,
       "verificationMethod": "Source wording and options conflict; excluded pending administrator review."
+    },
+    {
+      "id": "pgcet2026_q069",
+      "sourceQuestionNumber": 69,
+      "question": "The Boolean expressions (AB)' = A' + B' and (A + B)' = A'B' represent:",
+      "options": [
+        {
+          "id": "pgcet2026_q069_opt1",
+          "text": "Absorption law"
+        },
+        {
+          "id": "pgcet2026_q069_opt2",
+          "text": "Distributive law"
+        },
+        {
+          "id": "pgcet2026_q069_opt3",
+          "text": "De Morgan's law"
+        },
+        {
+          "id": "pgcet2026_q069_opt4",
+          "text": "Idempotent law"
+        }
+      ],
+      "correctOptionId": "pgcet2026_q069_opt3",
+      "category": "Computer Fundamentals",
+      "image": null,
+      "explanation": "These two identities are De Morgan's laws.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently worked from the supplied PDF question; not an official KEA key."
     },
     {
       "id": "pgcet2026_q074",
