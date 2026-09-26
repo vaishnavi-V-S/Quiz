@@ -1,18 +1,15 @@
-# Publish the mobile-ready static site
+# Netlify deployment
 
-The static upload bundle is in `dist/`. It includes the page, styling, app code, question bank, and a local copy of SheetJS.
+This project is plain HTML, CSS, and browser JavaScript. It does not need Node.js, a package install, or a build step.
 
-## Cloudflare Pages (free)
+## Quick deploy
 
-1. Sign in to Cloudflare and open **Workers & Pages**.
-2. Choose **Create application → Get started → Drag and drop your files**.
-3. Create a project name, then upload the contents of `dist/` (or the prepared `kle-bca-quiz-hosting.zip`).
-4. Select **Deploy site**. Cloudflare will show the public `https://<project-name>.pages.dev` URL. It is responsive and can be opened from a phone.
+1. Open https://app.netlify.com/drop
+2. Drag the dist folder from this project into the drop area.
+3. Netlify publishes the website and displays its public URL.
 
-## Vercel
+## Deploy from GitHub
 
-Import the project into Vercel or use its CLI after signing in. Set the project root/output directory to `dist` and leave the build command empty; this is a plain static HTML site.
+Import the repository into Netlify. The netlify.toml configuration sets the publish directory to dist. Leave the build command blank.
 
-## Important data limitation
-
-This first version uses each browser's LocalStorage. If students take quizzes on separate phones, their registrations and results stay on those phones and will not appear in an admin dashboard on another device. A shared database/API must be added before using a public deployment for centralized class results. The demo admin password is also visible in the client code; do not use it for sensitive records.
+The deployed site is responsive and can be opened from a phone. Student records are stored separately in each browser's LocalStorage; use a shared backend before relying on a cross-device admin results view.
