@@ -8,10 +8,9 @@ The question bank contains 74 questions transcribed from the supplied Karnataka 
 
 ## Deploy to Netlify
 
-This is a static website. There is no Node.js runtime, install step, or build command.
+The student interface is plain HTML, CSS, and browser JavaScript. Shared records and protected admin access use a Netlify Edge Function (Deno runtime) and Netlify Blobs. No Node.js application or package install is used.
 
-- Drag the dist folder into Netlify Drop: https://app.netlify.com/drop
-- Or import this GitHub repository into Netlify. The included netlify.toml sets dist as the publish directory; leave the build command empty.
+Import this GitHub repository into Netlify. Keep the build command blank and publish directory set to `dist`; `netlify.toml` also registers the Edge Function. Use Git-based deploys so Netlify builds and publishes the Edge Function with the site. A drag-and-drop static-only deploy will not include shared result storage.
 
 Netlify serves the site on a public URL that works on desktop and mobile browsers. To update a manual deploy, upload the updated dist folder again.
 
@@ -21,21 +20,18 @@ Netlify serves the site on a public URL that works on desktop and mobile browser
 - Fisher–Yates randomization of verified questions and option order.
 - 60-minute timestamp-based countdown, answer autosave, refresh recovery, and automatic submission.
 - Automatic scoring and post-quiz answer review.
-- Admin demo login, question/answer-key management, student records, filters, rankings, and attempt reset.
+- Server-side admin login, question/answer-key management, shared student records, filters, rankings, and attempt reset.
 - Excel exports with separate worksheets for each BCA year.
 - Responsive layouts for desktop, tablet, and phone.
 - SheetJS is included as a local browser asset under assets/vendor.
 
-## Admin demo access
+## Admin access
 
-Username: admin
-Password: admin123
+Admin login is handled by the Edge Function and uses an HttpOnly session cookie. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in Netlify site environment variables (Functions scope) and redeploy to replace the compatibility defaults. Do not use the compatibility defaults for real student records.
 
-This is client-side demonstration authentication. Do not use this build to protect sensitive student records.
+## Data persistence
 
-## Storage limitation
-
-Student, result, and question records use browser LocalStorage. Each browser/device has its own data; submissions from students' phones will not automatically appear in an admin's browser. Centralized class results require a shared API/database. LocalStorage is editable and is not secure production storage.
+Active quiz recovery and question edits use browser LocalStorage. Completed attempts are also sent to the same-origin Netlify Edge API and stored in the site-wide Netlify Blobs store, so results from student phones appear in the admin dashboard. Pending local results retry on the next visit. A student must reopen the updated site once to upload any result that was completed before shared storage was deployed.
 
 ## Project structure
 

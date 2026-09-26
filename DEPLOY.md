@@ -1,15 +1,13 @@
-# Netlify deployment
+# Deploy to Netlify
 
-This project is plain HTML, CSS, and browser JavaScript. It does not need Node.js, a package install, or a build step.
+This project uses static HTML/CSS/JavaScript for the website plus a Netlify Edge Function for shared results. It has no Node.js application or `package.json`.
 
-## Quick deploy
+## Deploy
 
-1. Open https://app.netlify.com/drop
-2. Drag the dist folder from this project into the drop area.
-3. Netlify publishes the website and displays its public URL.
+1. In Netlify, import `https://github.com/vaishnavi-V-S/web.git`.
+2. Set the build command to blank and publish directory to `dist` (already declared in `netlify.toml`).
+3. Deploy from the Git-connected repository. The Edge Function is in `netlify/edge-functions/api.js`; a static drag-and-drop deploy will not publish it.
+4. In Netlify site environment variables, add `ADMIN_USERNAME` and `ADMIN_PASSWORD` with Functions scope, then trigger a new deploy.
+5. Open `/api/health` on the deployed domain and confirm it returns `{"ok":true}`.
 
-## Deploy from GitHub
-
-Import the repository into Netlify. The netlify.toml configuration sets the publish directory to dist. Leave the build command blank.
-
-The deployed site is responsive and can be opened from a phone. Student records are stored separately in each browser's LocalStorage; use a shared backend before relying on a cross-device admin results view.
+Quiz submissions are scored against the verified question bank in the Edge Function and persisted in the site-wide Netlify Blobs store. The admin dashboard fetches these shared records, including class-wise results and exports. Student browsers with older local-only completed attempts should reopen the new site once so pending results can sync.
