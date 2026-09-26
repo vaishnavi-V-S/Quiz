@@ -775,12 +775,13 @@
           "text": "2 3 h a"
         }
       ],
-      "correctOptionId": null,
+      "correctOptionId": "pgcet2026_q036_opt3",
       "category": "Logical Reasoning",
       "image": null,
-      "explanation": null,
-      "verified": false,
-      "enabled": true
+      "explanation": "The missing entries complete the number-letter pairs: 1-a, 7-g, 3-c, 8-h, and 2-b. The missing sequence is a, 3, h, 2.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently checked against the question content; not an official KEA key."
     },
     {
       "id": "pgcet2026_q038",
@@ -984,12 +985,13 @@
           "text": "(c) and (d) only"
         }
       ],
-      "correctOptionId": null,
+      "correctOptionId": "pgcet2026_q049_opt2",
       "category": "General Knowledge",
       "image": null,
-      "explanation": null,
-      "verified": false,
-      "enabled": true
+      "explanation": "Statements (a), (b), and (d) are correct. Statement (c) is incorrect because GST is collected through the supply chain, with input tax credit, rather than only once at the final stage.",
+      "verified": true,
+      "enabled": true,
+      "verificationMethod": "Answer independently checked against the question content; not an official KEA key."
     },
     {
       "id": "pgcet2026_q050",
@@ -1376,9 +1378,10 @@
       "correctOptionId": null,
       "category": "Mathematics",
       "image": null,
-      "explanation": null,
+      "explanation": "The wording says to scale both coordinates by 3, which would produce (0,0), (15,0), and (6,9). None of the supplied options matches, so this source item is disabled and left unverified.",
       "verified": false,
-      "enabled": true
+      "enabled": false,
+      "verificationMethod": "Source wording and options conflict; excluded pending administrator review."
     },
     {
       "id": "pgcet2026_q074",
