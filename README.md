@@ -8,7 +8,7 @@ The question bank contains 74 questions transcribed from the supplied Karnataka 
 
 ## Deploy to Netlify
 
-The student interface is plain HTML, CSS, and browser JavaScript. Shared records and protected admin access use a Netlify Edge Function (Deno runtime) and Netlify Blobs. No Node.js application or package install is used.
+The student interface is plain HTML, CSS, and browser JavaScript. Shared records and protected admin access use a Netlify Edge Function (Deno runtime) and Netlify Blobs. The root `package.json` declares the Edge Function's `@netlify/blobs` dependency so Netlify can bundle it during deployment.
 
 Import this GitHub repository into Netlify. Keep the build command blank and publish directory set to `dist`; `netlify.toml` also registers the Edge Function. Use Git-based deploys so Netlify builds and publishes the Edge Function with the site. A drag-and-drop static-only deploy will not include shared result storage.
 

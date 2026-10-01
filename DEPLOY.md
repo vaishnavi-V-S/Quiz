@@ -1,6 +1,6 @@
 # Deploy to Netlify
 
-This project uses static HTML/CSS/JavaScript for the website plus a Netlify Edge Function for shared results. It has no Node.js application or `package.json`.
+This project serves static HTML/CSS/JavaScript and uses a Netlify Edge Function for shared results. Its root `package.json` declares `@netlify/blobs`, required to bundle the Edge Function; no frontend build command is needed.
 
 ## Local preview
 
