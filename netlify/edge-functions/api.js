@@ -2,6 +2,7 @@ import { getStore } from "@netlify/blobs";
 import bank from "../../data/questions.json" with { type: "json" };
 
 const store = getStore("kle-bca-quiz-results");
+const questionStore = getStore("kle-bca-question-bank");
 const encoder = new TextEncoder();
 const QUIZ_SIZE = 40;
 const SESSION_SECONDS = 8 * 60 * 60;
@@ -39,6 +40,34 @@ function registrationKey(registrationNumber) {
   return `student:${encodeURIComponent(registrationNumber.trim().toLowerCase())}`;
 }
 function resultKey(attemptId) { return `result:${encodeURIComponent(attemptId)}`; }
+async function currentQuestionBank() {
+  return await questionStore.get("question-bank", { type: "json" }) || bank;
+}
+async function listQuestions() {
+  const current = await currentQuestionBank();
+  return json({ questions: current.questions || [] });
+}
+async function saveQuestions(request) {
+  if (!await isAdmin(request)) return json({ error: "Please sign in again to manage questions." }, 401);
+  const body = await request.json();
+  const questions = body.questions;
+  if (!Array.isArray(questions) || questions.length > 500) return json({ error: "The question bank must contain no more than 500 questions." }, 400);
+  const ids = new Set();
+  for (const question of questions) {
+    if (!question || typeof question.id !== "string" || !question.id || ids.has(question.id)
+      || typeof question.question !== "string" || !question.question.trim()
+      || !Array.isArray(question.options) || question.options.length !== 4
+      || question.options.some((option) => !option || typeof option.id !== "string" || !option.id || typeof option.text !== "string" || !option.text.trim())) {
+      return json({ error: "Each question must have a unique ID, text, and exactly four labeled options." }, 400);
+    }
+    ids.add(question.id);
+    if (question.verified && !question.options.some((option) => option.id === question.correctOptionId)) {
+      return json({ error: "A verified question must have a correct option from its four choices." }, 400);
+    }
+  }
+  await questionStore.set("question-bank", JSON.stringify({ questions }));
+  return json({ ok: true, questions });
+}
 
 async function login(request) {
   const body = await request.json();
@@ -67,7 +96,8 @@ async function saveResult(request) {
   if (!registrationNumber || !name || !semester || !CLASSES.has(className) || !attemptId) return json({ error: "Student or attempt details are incomplete." }, 400);
   if (questionIds.length !== QUIZ_SIZE || new Set(questionIds).size !== QUIZ_SIZE) return json({ error: "A valid attempt must contain 40 unique questions." }, 400);
 
-  const questionMap = new Map((bank.questions || []).map((question) => [question.id, question]));
+  const questionBank = await currentQuestionBank();
+  const questionMap = new Map((questionBank.questions || []).map((question) => [question.id, question]));
   const counts = { correctCount: 0, wrongCount: 0, unansweredCount: 0 };
   const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
   for (const id of questionIds) {
@@ -100,6 +130,9 @@ async function saveResult(request) {
     quizDate: new Date(endTime).toLocaleDateString("en-CA"),
     quizTime: new Date(endTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
     status: "Completed", submitted: true, syncStatus: "synced",
+    integrityTerminated: body.integrityTerminated === true,
+    integrityWarnings: Math.max(0, Math.min(2, Number(body.integrityWarnings) || 0)),
+    integrityReason: body.integrityTerminated ? clean(body.integrityReason, 160) : null,
   };
   if (!savedAttempt) await store.set(key, JSON.stringify(result));
   else Object.assign(result, savedAttempt, { syncStatus: "synced" });
@@ -133,6 +166,8 @@ export default async function handler(request) {
   const path = new URL(request.url).pathname;
   try {
     if (path === "/api/admin/login" && request.method === "POST") return await login(request);
+    if (path === "/api/questions" && request.method === "GET") return await listQuestions();
+    if (path === "/api/questions" && request.method === "PUT") return await saveQuestions(request);
     if (path === "/api/admin/logout" && request.method === "POST") {
       const token = cookieValue(request, "kleBcaAdmin");
       if (token) await store.delete(`session:${await hash(token)}`);
@@ -148,4 +183,3 @@ export default async function handler(request) {
     return json({ error: "The shared quiz service is temporarily unavailable. Please retry." }, 500);
   }
 }
-
