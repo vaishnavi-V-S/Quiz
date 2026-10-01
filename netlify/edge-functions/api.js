@@ -1,8 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import bank from "../../data/questions.json" with { type: "json" };
 
-const store = getStore("kle-bca-quiz-results");
-const questionStore = getStore("kle-bca-question-bank");
 const encoder = new TextEncoder();
 const QUIZ_SIZE = 40;
 const SESSION_SECONDS = 8 * 60 * 60;
@@ -30,7 +28,7 @@ async function hash(value) {
   const bytes = await crypto.subtle.digest("SHA-256", encoder.encode(value));
   return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
-async function isAdmin(request) {
+async function isAdmin(request, store) {
   const token = cookieValue(request, "kleBcaAdmin");
   if (!token) return false;
   const session = await store.get(`session:${await hash(token)}`, { type: "json" });
@@ -40,15 +38,15 @@ function registrationKey(registrationNumber) {
   return `student:${encodeURIComponent(registrationNumber.trim().toLowerCase())}`;
 }
 function resultKey(attemptId) { return `result:${encodeURIComponent(attemptId)}`; }
-async function currentQuestionBank() {
+async function currentQuestionBank(questionStore) {
   return await questionStore.get("question-bank", { type: "json" }) || bank;
 }
-async function listQuestions() {
-  const current = await currentQuestionBank();
+async function listQuestions(questionStore) {
+  const current = await currentQuestionBank(questionStore);
   return json({ questions: current.questions || [] });
 }
-async function saveQuestions(request) {
-  if (!await isAdmin(request)) return json({ error: "Please sign in again to manage questions." }, 401);
+async function saveQuestions(request, store, questionStore) {
+  if (!await isAdmin(request, store)) return json({ error: "Please sign in again to manage questions." }, 401);
   const body = await request.json();
   const questions = body.questions;
   if (!Array.isArray(questions) || questions.length > 500) return json({ error: "The question bank must contain no more than 500 questions." }, 400);
@@ -69,7 +67,7 @@ async function saveQuestions(request) {
   return json({ ok: true, questions });
 }
 
-async function login(request) {
+async function login(request, store) {
   const body = await request.json();
   const expectedUser = Netlify.env.get("ADMIN_USERNAME") || "admin";
   const expectedPassword = Netlify.env.get("ADMIN_PASSWORD") || "admin123";
@@ -84,7 +82,7 @@ async function login(request) {
   return json({ ok: true }, 200, { "set-cookie": `kleBcaAdmin=${encodeURIComponent(token)}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${SESSION_SECONDS}` });
 }
 
-async function saveResult(request) {
+async function saveResult(request, store, questionStore) {
   const body = await request.json();
   const student = body.student || {};
   const registrationNumber = clean(student.registrationNumber, 60);
@@ -96,7 +94,7 @@ async function saveResult(request) {
   if (!registrationNumber || !name || !semester || !CLASSES.has(className) || !attemptId) return json({ error: "Student or attempt details are incomplete." }, 400);
   if (questionIds.length !== QUIZ_SIZE || new Set(questionIds).size !== QUIZ_SIZE) return json({ error: "A valid attempt must contain 40 unique questions." }, 400);
 
-  const questionBank = await currentQuestionBank();
+  const questionBank = await currentQuestionBank(questionStore);
   const questionMap = new Map((questionBank.questions || []).map((question) => [question.id, question]));
   const counts = { correctCount: 0, wrongCount: 0, unansweredCount: 0 };
   const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
@@ -141,8 +139,8 @@ async function saveResult(request) {
   return json({ result, student: studentRecord });
 }
 
-async function listResults(request) {
-  if (!await isAdmin(request)) return json({ error: "Please sign in again to view shared results." }, 401);
+async function listResults(request, store) {
+  if (!await isAdmin(request, store)) return json({ error: "Please sign in again to view shared results." }, 401);
   const [resultKeys, studentKeys] = await Promise.all([store.list({ prefix: "result:" }), store.list({ prefix: "student:" })]);
   const [results, students] = await Promise.all([
     Promise.all(resultKeys.blobs.map((blob) => store.get(blob.key, { type: "json" }))),
@@ -152,8 +150,8 @@ async function listResults(request) {
   return json({ results: results.filter(Boolean), students: students.filter(Boolean) });
 }
 
-async function resetResult(request) {
-  if (!await isAdmin(request)) return json({ error: "Please sign in again to manage results." }, 401);
+async function resetResult(request, store) {
+  if (!await isAdmin(request, store)) return json({ error: "Please sign in again to manage results." }, 401);
   const body = await request.json();
   const attemptId = clean(body.attemptId, 120);
   const result = await store.get(resultKey(attemptId), { type: "json" });
@@ -165,17 +163,19 @@ async function resetResult(request) {
 export default async function handler(request) {
   const path = new URL(request.url).pathname;
   try {
-    if (path === "/api/admin/login" && request.method === "POST") return await login(request);
-    if (path === "/api/questions" && request.method === "GET") return await listQuestions();
-    if (path === "/api/questions" && request.method === "PUT") return await saveQuestions(request);
+    const store = getStore("kle-bca-quiz-results");
+    const questionStore = getStore("kle-bca-question-bank");
+    if (path === "/api/admin/login" && request.method === "POST") return await login(request, store);
+    if (path === "/api/questions" && request.method === "GET") return await listQuestions(questionStore);
+    if (path === "/api/questions" && request.method === "PUT") return await saveQuestions(request, store, questionStore);
     if (path === "/api/admin/logout" && request.method === "POST") {
       const token = cookieValue(request, "kleBcaAdmin");
       if (token) await store.delete(`session:${await hash(token)}`);
       return json({ ok: true }, 200, { "set-cookie": "kleBcaAdmin=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0" });
     }
-    if (path === "/api/results" && request.method === "GET") return await listResults(request);
-    if (path === "/api/results" && request.method === "POST") return await saveResult(request);
-    if (path === "/api/results" && request.method === "DELETE") return await resetResult(request);
+    if (path === "/api/results" && request.method === "GET") return await listResults(request, store);
+    if (path === "/api/results" && request.method === "POST") return await saveResult(request, store, questionStore);
+    if (path === "/api/results" && request.method === "DELETE") return await resetResult(request, store);
     if (path === "/api/health" && request.method === "GET") return json({ ok: true });
     return json({ error: "API route not found." }, 404);
   } catch (error) {
