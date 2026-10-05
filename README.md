@@ -23,9 +23,9 @@ Netlify serves the site on a public URL that works on desktop and mobile browser
 - 60-minute timestamp-based countdown, answer autosave, refresh recovery, and automatic submission.
 - Tab/page-leave monitoring, PrintScreen/Mac screenshot-shortcut handling, and focus-loss warnings during an assessment; the second detected warning automatically submits and closes the attempt. Browser screenshot detection is best-effort and cannot detect every operating-system capture method.
 - Automatic scoring and post-quiz answer review.
-- Server-side admin login, shared question-bank and answer-key management, shared student records, filters, rankings, and attempt reset.
+- Server-side admin login, shared question-bank and answer-key management, shared registration/attempt records, filters, rankings, and attempt reset.
 - The admin dashboard refreshes shared results every 15 seconds while open, refreshes when brought back into focus, and has a manual refresh button. Class-wise views and new Excel downloads use the latest fetched results.
-- Admin PDF import for text-searchable question PDFs with four A-D options and an optional separate answer-key PDF. Extracted questions are previewed before import; matched answers are marked verified only after an administrator confirms the extraction. Scanned/image-only PDFs and arbitrary layouts require OCR/manual entry.
+- Admin PDF import with a locally bundled PDF reader for text-searchable question PDFs with four A-D options and an optional separate answer-key PDF. The parser handles common inline and row-based answer formats without requiring a third-party CDN. Extracted questions are previewed before import; matched answers are marked verified only after an administrator confirms the extraction. Scanned/image-only PDFs require OCR/manual entry.
 - Excel exports with separate worksheets for each BCA year.
 - Responsive layouts for desktop, tablet, and phone.
 - Local SVG education illustrations on the home page for practice, timed focus, and answer review.
@@ -38,7 +38,7 @@ Admin login is handled by the Edge Function and uses an HttpOnly session cookie.
 
 ## Data persistence
 
-Active quiz recovery uses browser LocalStorage. Question edits are cached locally and synchronized through the same-origin Netlify Edge API to Netlify Blobs so students on other devices can access the shared question bank. Completed attempts are sent to Netlify Blobs and appear on the admin dashboard; if the connection is temporarily unavailable, the browser retries while online and when the student returns to the site. Admin result lists refresh while the dashboard is open. Excel workbooks are generated when an admin clicks Export, so download a new workbook to include newly synced results.
+Active quiz recovery uses browser LocalStorage. On the deployed site, student registrations are immediately saved in Netlify Blobs and appear in the admin roster even if the student does not finish the quiz; completion updates that student's existing record with the score. Records do not expire automatically. The admin's explicit Reset action removes a result but retains the student's registration. No application code purges records after two days. Question edits are cached locally and synchronized through the same-origin Netlify Edge API to Netlify Blobs so students on other devices can access the shared question bank. If the connection is temporarily unavailable, completed results retry while online and when the student returns to the site. Admin result lists refresh while the dashboard is open. Excel workbooks are generated when an admin clicks Export, so download a new workbook to include newly synced results.
 
 ## Project structure
 

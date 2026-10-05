@@ -67,6 +67,35 @@ async function saveQuestions(request, store, questionStore) {
   return json({ ok: true, questions });
 }
 
+async function saveStudent(request, store) {
+  const body = await request.json();
+  const registrationNumber = clean(body.registrationNumber, 60);
+  const name = clean(body.name, 120);
+  const semester = clean(body.semester, 30);
+  const className = clean(body.className, 40);
+  const status = body.status === "Started" ? "Started" : "Registered";
+  const attemptId = status === "Started" ? clean(body.attemptId, 120) : null;
+  if (!registrationNumber || !name || !semester || !CLASSES.has(className)
+    || (status === "Started" && !attemptId)) {
+    return json({ error: "Student registration details are incomplete or invalid." }, 400);
+  }
+  const key = registrationKey(registrationNumber);
+  const existing = await store.get(key, { type: "json" });
+  if (existing && existing.status !== "Registered") {
+    return json({ error: "This student already has an active or completed quiz attempt." }, 409);
+  }
+  const registeredAt = existing?.registrationTimestamp || Date.now();
+  const student = {
+    registrationNumber, name, semester, className, status,
+    registrationTimestamp: registeredAt,
+    registrationDate: new Date(registeredAt).toLocaleDateString("en-CA"),
+    registrationTime: new Date(registeredAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
+    attemptId,
+  };
+  await store.set(key, JSON.stringify(student));
+  return json({ student });
+}
+
 async function login(request, store) {
   const body = await request.json();
   const expectedUser = Netlify.env.get("ADMIN_USERNAME") || "admin";
@@ -141,10 +170,11 @@ async function saveResult(request, store, questionStore) {
 
 async function listResults(request, store) {
   if (!await isAdmin(request, store)) return json({ error: "Please sign in again to view shared results." }, 401);
-  const [resultKeys, studentKeys] = await Promise.all([store.list({ prefix: "result:" }), store.list({ prefix: "student:" })]);
+  const storage = store;
+  const [resultKeys, studentKeys] = await Promise.all([storage.list({ prefix: "result:" }), storage.list({ prefix: "student:" })]);
   const [results, students] = await Promise.all([
-    Promise.all(resultKeys.blobs.map((blob) => store.get(blob.key, { type: "json" }))),
-    Promise.all(studentKeys.blobs.map((blob) => store.get(blob.key, { type: "json" }))),
+    Promise.all(resultKeys.blobs.map((blob) => storage.get(blob.key, { type: "json" }))),
+    Promise.all(studentKeys.blobs.map((blob) => storage.get(blob.key, { type: "json" }))),
   ]);
   results.sort((a, b) => (b?.endTime || 0) - (a?.endTime || 0));
   return json({ results: results.filter(Boolean), students: students.filter(Boolean) });
@@ -154,9 +184,15 @@ async function resetResult(request, store) {
   if (!await isAdmin(request, store)) return json({ error: "Please sign in again to manage results." }, 401);
   const body = await request.json();
   const attemptId = clean(body.attemptId, 120);
-  const result = await store.get(resultKey(attemptId), { type: "json" });
+  const storage = store;
+  const result = await storage.get(resultKey(attemptId), { type: "json" });
   if (!result) return json({ error: "Attempt not found." }, 404);
-  await Promise.all([store.delete(resultKey(attemptId)), store.delete(registrationKey(result.student.registrationNumber))]);
+  const studentKey = registrationKey(result.student.registrationNumber);
+  const student = await storage.get(studentKey, { type: "json" });
+  await storage.delete(resultKey(attemptId));
+  if (student) {
+    await storage.set(studentKey, JSON.stringify({ ...student, status: "Registered", attemptId: null }));
+  }
   return json({ ok: true });
 }
 
@@ -168,6 +204,7 @@ export default async function handler(request) {
     if (path === "/api/admin/login" && request.method === "POST") return await login(request, store);
     if (path === "/api/questions" && request.method === "GET") return await listQuestions(questionStore);
     if (path === "/api/questions" && request.method === "PUT") return await saveQuestions(request, store, questionStore);
+    if (path === "/api/students" && request.method === "POST") return await saveStudent(request, store);
     if (path === "/api/admin/logout" && request.method === "POST") {
       const token = cookieValue(request, "kleBcaAdmin");
       if (token) await store.delete(`session:${await hash(token)}`);
